@@ -1,0 +1,80 @@
+# Port of Dan Schiffman's (shiffman/shiffman.net) Perceptron code to Python
+# Creates a one-node neural network (= neuron)
+# in turn based on orignal cybernetics ideas from the 1950s
+# deails here: https://natureofcode.com/neural-networks/
+
+import pygame
+import random
+import numpy as np
+
+# Define the Perceptron class
+class Perceptron:
+    def __init__(self, n, learning_rate):
+        self.weights = np.random.rand(n) * 2 - 1
+        self.learning_rate = learning_rate
+
+    def feedforward(self, inputs):
+        total = np.dot(self.weights, inputs)
+        return 1 if total > 0 else -1
+
+    def train(self, inputs, desired):
+        guess = self.feedforward(inputs)
+        error = desired - guess
+        self.weights += self.learning_rate * error * np.array(inputs)
+
+# The function for the line
+def f(x):
+    return 0.5 * x + 1
+
+# Initialize pygame
+pygame.init()
+
+# Screen dimensions
+width, height = 640, 240
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Perceptron")
+
+# Create a Perceptron
+perceptron = Perceptron(3, 0.0001)
+
+# Create training data
+training = []
+for i in range(2000):
+    x = random.uniform(-width / 2, width / 2)
+    y = random.uniform(-height / 2, height / 2)
+    training.append([x, y, 1])
+
+count = 0
+running = True
+while running:
+    screen.fill((255, 255, 255))
+    
+    # Re-orient to traditional Cartesian plane
+    pygame.draw.line(screen, (0, 0, 0), (0, height / 2), (width, height / 2), 1)
+    pygame.draw.line(screen, (0, 0, 0), (width / 2, 0), (width / 2, height), 1)
+    
+    # Draw the line
+    x1, y1 = -width / 2, f(-width / 2)
+    x2, y2 = width / 2, f(width / 2)
+    pygame.draw.line(screen, (0, 0, 0), (x1 + width / 2, height / 2 - y1), (x2 + width / 2, height / 2 - y2), 2)
+    
+    # Get the current (x, y) of the training data
+    x, y = training[count][0], training[count][1]
+    desired = 1 if y > f(x) else -1
+    perceptron.train(training[count], desired)
+
+    # Draw all the points
+    for dataPoint in training:
+        guess = perceptron.feedforward(dataPoint)
+        color = (127, 127, 127) if guess > 0 else (255, 255, 255)
+        pygame.draw.circle(screen, color, (int(dataPoint[0] + width / 2), int(height / 2 - dataPoint[1])), 4)
+        pygame.draw.circle(screen, (0, 0, 0), (int(dataPoint[0] + width / 2), int(height / 2 - dataPoint[1])), 4, 1)
+    
+    pygame.display.flip()
+    count = (count + 1) % len(training)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+pygame.quit()
