@@ -2,6 +2,7 @@
 # Creates a one-node neural network (= neuron)
 # in turn based on orignal cybernetics ideas from the 1950s
 # deails here: https://natureofcode.com/neural-networks/
+# requires pygame and numpy libraries: pip install pygame numpy
 
 import pygame
 import random
