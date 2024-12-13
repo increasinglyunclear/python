@@ -2,8 +2,9 @@
 Video to Text Transcription Script
 --------------------------------
 
-This script extracts audio from a video file and transcribes it to text using
-Google's Speech Recognition API.
+This script extracts audio from video files and transcribes it to text using
+Google's Speech Recognition API. Supports multiple video formats including
+.mp4, .mov, .avi, .mkv, and .webm.
 
 Dependencies:
 ------------
@@ -25,6 +26,10 @@ Installation:
 2. Install required packages:
    pip install moviepy SpeechRecognition pydub
 
+3. Install ffmpeg (recommended):
+   brew install ffmpeg      # On Mac
+   choco install ffmpeg     # On Windows
+
 Usage:
 ------
 1. Replace the video_path variable with your video file path
@@ -36,17 +41,37 @@ Note:
 - Requires internet connection for Google Speech Recognition API
 - Accuracy depends on audio quality
 - Free tier of Google Speech Recognition has usage limits
+- Supports multiple video formats (.mp4, .mov, .avi, .mkv, .webm)
 """
 
 from moviepy.editor import VideoFileClip
 import speech_recognition as sr
 import os
 
+def is_supported_format(file_path):
+    """Check if the file format is supported"""
+    supported_formats = ['.mp4', '.mov', '.avi', '.mkv', '.webm']
+    file_extension = os.path.splitext(file_path)[1].lower()
+    return file_extension in supported_formats
+
 def extract_audio_from_video(video_path, audio_path):
     """Extract audio from video file"""
+    if not os.path.exists(video_path):
+        print(f"Error: Video file '{video_path}' not found.")
+        return False
+        
+    if not is_supported_format(video_path):
+        print(f"Warning: File format {os.path.splitext(video_path)[1]} might not be supported.")
+        print("Attempting to process anyway...")
+
     try:
         print(f"Extracting audio from {video_path}...")
         video = VideoFileClip(video_path)
+        
+        if video.audio is None:
+            print("Error: No audio stream found in the video file.")
+            return False
+            
         video.audio.write_audiofile(audio_path)
         video.close()
         print("Audio extraction completed!")
@@ -81,7 +106,7 @@ def transcribe_audio(audio_path):
 
 def main():
     # File paths
-    video_path = "path/to/your/video.mp4"  # Replace with your video path
+    video_path = "path/to/your/video.mov"  # Works with multiple video formats
     audio_path = "temp_audio.wav"
     output_text_path = "transcription.txt"
 
