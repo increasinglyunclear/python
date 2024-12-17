@@ -1,0 +1,42 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CCAI Video Analysis</title>
+    <style>
+        /* Add your CSS here */
+    </style>
+</head>
+<body>
+    <h1>CCAI Video Analysis</h1>
+    
+    <form id="uploadForm">
+        <input type="file" name="video" accept=".mp4,.avi,.mov">
+        <button type="submit">Analyze Video</button>
+    </form>
+    
+    <div id="results" style="display:none;">
+        <h2>Results:</h2>
+        <div id="objectResults">
+            <h3>Detected Objects:</h3>
+            <ul id="objectList"></ul>
+        </div>
+        
+        <div id="poseResults">
+            <h3>Pose Estimation:</h3>
+            <div id="poseData"></div>
+        </div>
+        
+        <div id="audioResults">
+            <h3>Audio Transcription:</h3>
+            <p id="transcription"></p>
+            <h3>Translation:</h3>
+            <p id="translation"></p>
+        </div>
+    </div>
+
+    <script>
+        // Add your JavaScript here
+    </script>
+</body>
+</html>
