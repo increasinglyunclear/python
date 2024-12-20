@@ -1,218 +1,162 @@
 """
-CCAI Pose Estimation Script using YOLO model
-Kevin Walker
-28 Nov 2024
-This estimates human poses in video, writes the results to CSV file
---------------------------
+Pose Estimation Module
 
-Setup Steps:
-1. Install Homebrew (if not already installed):
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+This module provides functionality for extracting human pose data from videos using YOLOv8.
 
-2. Install FFmpeg:
-   brew install ffmpeg
-
-3. Install Anaconda or Miniconda (if not already installed):
-   Visit: https://docs.conda.io/en/latest/miniconda.html
-
-4. Create and activate conda environment:
-   conda create -n poseestimation python=3.10
-   conda activate poseestimation
-
-5. Install required packages:
-   pip install ultralytics opencv-python
-
-6. Create directories:
-   mkdir -p input output
-
-7. Place video files in the 'input' directory.
-
-8. Run script:
-   python3 pose_estimation.py
+Dependencies:
+    - opencv-python
+    - ultralytics
+    - numpy
+    - torch
 
 Usage:
-- Place video files in the 'input' directory
-- Script will automatically process videos and save results to 'output' directory
-- Results are saved as CSV files with keypoint data
-- Processed videos are moved to 'output' directory with 'processed_' prefix
-- Press Ctrl+C to stop the script
-
-Supported video formats: .mp4, .avi, .mov, .MOV
+    As a script:
+        python -m scripts.pose_estimation
+    
+    As a module:
+        from pose_estimation import PoseEstimator
+        estimator = PoseEstimator()
+        estimator.process_video("input.mp4", "output.json")
 """
 
-from ultralytics import YOLO
 import cv2
-import csv
+from ultralytics import YOLO
+import json
 from pathlib import Path
-import time
-import logging
+import numpy as np
+import sys
 
 class PoseEstimator:
-    def __init__(self, input_dir="input", output_dir="output"):
+    def __init__(self):
+        """Initialize the YOLO pose estimation model"""
+        print("Initializing YOLO model...")
+        self.model = YOLO('yolov8n-pose.pt')
+        print("Model initialized")
+
+    def process_frame(self, frame):
         """
-        Initialize the PoseEstimator with input and output directories.
+        Process a single frame to extract pose data.
         
         Args:
-            input_dir (str): Path to input directory containing video files
-            output_dir (str): Path to output directory for results and processed videos
+            frame: numpy array, Input frame
+            
+        Returns:
+            list: List of detected poses with keypoints
         """
-        print("Initializing Pose Estimator...")
-        self.input_dir = Path(input_dir)
-        self.output_dir = Path(output_dir)
+        try:
+            results = self.model(frame, verbose=False)[0]
+            
+            if results.keypoints is not None and len(results.keypoints) > 0:
+                keypoints = results.keypoints.data.cpu().numpy()
+                
+                frame_data = []
+                for person_keypoints in keypoints:
+                    kpts = person_keypoints.reshape(-1, 3).tolist()
+                    frame_data.append({
+                        "keypoints": kpts
+                    })
+                return frame_data
+        except Exception as e:
+            print(f"Error processing frame: {e}")
+        return []
 
-        # Create directories if they don't exist
-        self.input_dir.mkdir(exist_ok=True)
-        self.output_dir.mkdir(exist_ok=True)
-
-        # Load YOLO pose estimation model
-        self.pose_model = YOLO('yolov8n-pose.pt')
-
-        # Configure logging
-        logging.basicConfig(level=logging.INFO)
-
-    def process_video(self, video_path):
+    def process_video(self, video_path, output_path):
         """
-        Process a video file and extract pose estimation data.
+        Process entire video and save pose data to JSON.
         
         Args:
-            video_path (Path): Path to the input video file
+            video_path: str, Path to input video
+            output_path: str, Path to save JSON output
+            
+        Returns:
+            list: All detected poses across frames
         """
-        video_name = video_path.stem
-        pose_file = self.output_dir / f"{video_name}_poses.csv"
-        
-        print(f"\nProcessing video: {video_path}")
-        
-        # Open video capture
+        print(f"Opening video: {video_path}")
         cap = cv2.VideoCapture(str(video_path))
         if not cap.isOpened():
-            logging.error(f"Could not open video file: {video_path}")
-            return
-        
-        # Get video properties
+            raise ValueError(f"Could not open video file: {video_path}")
+
         frame_count = 0
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        
-        # Open CSV file for writing results
-        with open(pose_file, 'w', newline='') as pose_csv:
-            pose_writer = csv.writer(pose_csv)
-            # Write CSV headers
-            pose_writer.writerow([
-                'frame_number',
-                'person_id',
-                'keypoint_name',
-                'x',
-                'y',
-                'confidence'
-            ])
-            
-            # Process each frame
-            while cap.isOpened():
+        all_poses = []
+
+        try:
+            while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
-                
-                # Process pose estimation
-                try:
-                    # Print progress every 100 frames
-                    if frame_count % 100 == 0:
-                        print(f"Processing frame {frame_count}/{total_frames} ({(frame_count/total_frames)*100:.1f}%)")
-                    
-                    # Run pose estimation on current frame
-                    results = self.pose_model(frame)
-                    
-                    # Process each detection
-                    for result in results:
-                        # Check if keypoints were detected
-                        if hasattr(result, 'keypoints') and result.keypoints is not None:
-                            # Get all keypoints for all detected persons
-                            all_keypoints = result.keypoints.data
-                            
-                            # Process each person's keypoints
-                            for person_idx in range(len(all_keypoints)):
-                                person_keypoints = all_keypoints[person_idx]
-                                
-                                # Process each keypoint
-                                for kp_idx, keypoint in enumerate(person_keypoints):
-                                    # Extract coordinates and confidence
-                                    x, y, conf = keypoint.cpu().numpy()
-                                    
-                                    # Get keypoint name from model's dictionary
-                                    kp_name = self.pose_model.names.get(kp_idx, f"keypoint_{kp_idx}")
-                                    
-                                    # Write keypoint data to CSV
-                                    pose_writer.writerow([
-                                        frame_count,
-                                        person_idx,
-                                        kp_name,
-                                        float(x),  # Convert to float for CSV compatibility
-                                        float(y),
-                                        float(conf)
-                                    ])
-                    
-                except Exception as e:
-                    logging.error(f"Error processing frame {frame_count}: {str(e)}")
-                    print(f"Error details for frame {frame_count}: {type(e).__name__}: {str(e)}")
-                    continue  # Continue with next frame even if current frame fails
+
+                poses = self.process_frame(frame)
+                all_poses.append({
+                    "frame": frame_count,
+                    "poses": poses
+                })
                 
                 frame_count += 1
-                
-        # Clean up
-        cap.release()
-        print(f"\nCompleted processing {video_path}")
-        print(f"Processed {frame_count} frames")
-        print(f"Pose estimation results saved to: {pose_file}")
+                if frame_count % 10 == 0:
+                    print(f"Processed {frame_count} frames")
 
-    def watch_directory(self):
-        """
-        Watch the input directory for new video files and process them automatically.
-        Press Ctrl+C to stop watching.
-        """
-        print(f"Watching directory: {self.input_dir.absolute()}")
-        print(f"Results will be saved to: {self.output_dir.absolute()}")
-        print("Waiting for video files... (Press Ctrl+C to stop)")
-        
-        # Define supported video formats
-        supported_formats = ['*.mp4', '*.avi', '*.mov', '*.MOV']
-        
-        while True:
-            try:
-                # Look for video files
-                video_files = []
-                for format in supported_formats:
-                    video_files.extend(self.input_dir.glob(format))
-                
-                if video_files:
-                    for video_path in video_files:
-                        try:
-                            logging.info(f"Processing: {video_path}")
-                            self.process_video(video_path)
-                            
-                            # Move processed file to output directory
-                            processed_path = self.output_dir / f"processed_{video_path.name}"
-                            video_path.rename(processed_path)
-                            logging.info(f"Moved processed video to: {processed_path}")
-                            
-                        except Exception as e:
-                            logging.error(f"Error processing {video_path}: {str(e)}")
+        except Exception as e:
+            print(f"Error during video processing: {e}")
+        finally:
+            cap.release()
+
+        print(f"Saving results to: {output_path}")
+        try:
+            with open(output_path, 'w') as f:
+                json.dump({
+                    "total_frames": frame_count,
+                    "frames": all_poses
+                }, f, indent=2)
+        except Exception as e:
+            print(f"Error saving results: {e}")
+
+        return all_poses
+
+def process_input_directory():
+    """Process all videos in the input directory"""
+    base_dir = Path(__file__).parent.parent
+    input_dir = base_dir / "input"
+    output_dir = base_dir / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"Input directory: {input_dir}")
+    print(f"Output directory: {output_dir}")
+
+    pose_estimator = PoseEstimator()
+
+    video_extensions = ('.mp4', '.avi', '.mov', '.MP4', '.AVI', '.MOV')
+    video_files = []
+    for ext in video_extensions:
+        video_files.extend(input_dir.glob(f'*{ext}'))
+
+    print(f"\nFound {len(video_files)} videos to process")
+    
+    results = {"successful": [], "failed": []}
+    
+    for video_path in video_files:
+        try:
+            output_path = output_dir / f"{video_path.stem}_poses.json"
+            print(f"\nProcessing: {video_path.name}")
             
-                # Wait before checking again
-                print("\nChecking for new files...")
-                time.sleep(5)  # Check every 5 seconds
-                
-            except KeyboardInterrupt:
-                print("\nStopping pose estimator...")
-                break
-            except Exception as e:
-                logging.error(f"Unexpected error: {str(e)}")
-                time.sleep(5)
+            poses = pose_estimator.process_video(str(video_path), str(output_path))
+            results["successful"].append(str(video_path))
+            
+        except Exception as e:
+            print(f"Failed to process {video_path.name}: {e}")
+            results["failed"].append(str(video_path))
 
-def main():
-    """
-    Main entry point for the script.
-    """
-    print("Starting Pose Estimator...")
-    estimator = PoseEstimator()
-    estimator.watch_directory()
+    print("\nProcessing complete!")
+    print(f"Successfully processed: {len(results['successful'])} videos")
+    if results['successful']:
+        print("Successful videos:")
+        for video in results['successful']:
+            print(f" - {video}")
+    
+    print(f"\nFailed to process: {len(results['failed'])} videos")
+    if results['failed']:
+        print("Failed videos:")
+        for video in results['failed']:
+            print(f" - {video}")
 
 if __name__ == "__main__":
-    main()
+    process_input_directory()
