@@ -1,4 +1,4 @@
-# Video Analysis Pipeline
+# Video Analysis
 
 A comprehensive video analysis pipeline that performs:
 - Action recognition using YOLO pose estimation (101 action classes)
