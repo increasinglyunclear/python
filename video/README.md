@@ -4,7 +4,7 @@ A comprehensive video analysis pipeline that performs:
 - Action recognition using YOLO pose estimation (101 action classes)
 - Object detection using YOLOv8
 - Audio transcription and translation with automatic detection of over 100 languages
-- This is ongong work. As a next step, participants re-train the model through feedback.
+- This work in progress. As a next step, participants re-train the model through feedback.
 
 ## Directory Structure
 ```
