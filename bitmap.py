@@ -1,7 +1,7 @@
 # Simple image threshold filter
 # pip install Pillow
 # Kevin Walker 02 Jan 2025
-# ported from Processing sketch
+# ported from Processing sketch: https://github.com/increasinglyunclear/processing/tree/main/bitmap
 
 from PIL import Image
 
