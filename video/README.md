@@ -1,4 +1,13 @@
-# Video Analysis
+# Cross-Cultural AI
+Funded by InnovateUK, 2024-25
+
+Cross-cultural AI automatically translates & analyses user-generated video to help generate culturally-specific insights. As filmmakers, we increasingly draw on crowdsourcing to generate content,ethnography to relate these hints and glimpses of life to the issues & indexes that matter, and data visualisation to draw it all together -- while keeping people's stories at the centre. 
+
+AI can recognise objects, people, actions; culturally-specific datasets plus crowdsourcing mean that creative practitioners could work more easily with participants globally. While our work focuses on climate change, the AI-driven platform we're developing could be applied to ranges of content, contexts, projects & products.
+
+Our approach combines quality of insights derived from user-generated content, with quantity coming with scale: Our Nine Earths project (http://nine-earths.net) drew from hundreds of hours of video from 12 countries. AI can now help translate languages, identify relevant content & recognise patterns to say something meaningful, especially when combined with participants' input and verification.
+
+# Video Analysis pipeline
 
 A comprehensive video analysis pipeline that performs:
 - Action recognition using YOLO pose estimation (101 action classes)
