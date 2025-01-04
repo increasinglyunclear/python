@@ -45,11 +45,14 @@ def extract_audio_from_video(video_path):
 def detect_language(text):
     """Detect the language of the transcribed text"""
     try:
+        # Force detection of Indonesian if it looks like Indonesian
         lang_code = detect(text)
+        if lang_code in ['ja', 'ko'] and any(c.isalpha() for c in text):  # If detected as Japanese/Korean but contains Latin chars
+            return 'id'  # Assume Indonesian
         return lang_code
     except Exception as e:
         logging.error(f"Language detection failed: {str(e)}")
-        return None
+        return 'id'  # Default to Indonesian if detection fails
 
 def transcribe_audio(video_path: str) -> str:
     """
@@ -72,11 +75,11 @@ def transcribe_audio(video_path: str) -> str:
             
         # Try transcription with language detection
         try:
-            # First try without specifying language
-            text = recognizer.recognize_google(audio, show_all=False)
+            # First try with Indonesian
+            text = recognizer.recognize_google(audio, language='id-ID')
         except:
-            # If that fails, try with common languages
-            common_languages = ['en-US', 'ko-KR', 'ja-JP', 'zh-CN']
+            # If that fails, try other common languages
+            common_languages = ['id-ID', 'en-US', 'ko-KR', 'ja-JP', 'zh-CN']
             for lang in common_languages:
                 try:
                     text = recognizer.recognize_google(audio, language=lang)
@@ -110,8 +113,8 @@ def translate_text(text: str, target='en') -> str:
         # Detect source language
         source_lang = detect_language(text)
         if not source_lang:
-            logging.warning("Could not detect source language, assuming English")
-            source_lang = 'en'
+            logging.warning("Could not detect source language, assuming Indonesian")
+            source_lang = 'id'
             
         # Skip translation if source is same as target
         if source_lang == target:
