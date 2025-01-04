@@ -77,8 +77,9 @@ class VideoProcessor:
                 model_files = list(model_dir.glob("model_*.pth"))
                 if model_files:
                     latest_model = max(model_files, key=lambda p: p.stat().st_mtime)
-                    actions = analyze_video(str(video_path), latest_model)
-                    results['actions'] = actions
+                    action_results = analyze_video(str(video_path), latest_model)
+                    # Extract just the actions from the results
+                    results['actions'] = action_results.get('actions', []) if action_results else []
                     logger.info("Action recognition complete")
                 else:
                     logger.warning("No action recognition model found")
@@ -125,33 +126,50 @@ class VideoProcessor:
     
     def _write_to_csv(self, results):
         """Write results to CSV file."""
-        row = [
-            results['timestamp'],
-            results['filename']
-        ]
-        
-        # Add action recognition results
-        if results['actions']:
-            actions_str = '; '.join([f"{action}: {conf:.1%}" for action, conf in results['actions']])
-            row.append(actions_str)
-        else:
-            row.append('')
-        
-        # Add object detection results
-        if results['objects']:
-            row.append(', '.join(results['objects']))
-        else:
-            row.append('')
-        
-        # Add audio processing results
-        row.extend([
-            results.get('transcription', ''),
-            results.get('translation', '')
-        ])
-        
-        with open(self.csv_path, 'a', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(row)
+        try:
+            row = [
+                results['timestamp'],
+                results['filename']
+            ]
+            
+            # Add action recognition results
+            if results.get('actions'):
+                # Debug logging
+                logger.debug(f"Actions to process: {results['actions']}")
+                try:
+                    # Format each action-confidence pair
+                    actions_str = '; '.join([
+                        f"Action {action}: {float(conf):.1%}" 
+                        for action, conf in results['actions']
+                    ])
+                    row.append(actions_str)
+                except Exception as e:
+                    logger.error(f"Error formatting actions: {str(e)}")
+                    actions_str = str(results['actions'])  # Fallback to raw string
+                    row.append(actions_str)
+            else:
+                row.append('')
+            
+            # Add object detection results
+            if results.get('objects'):
+                row.append(', '.join(results['objects']))
+            else:
+                row.append('')
+            
+            # Add audio processing results
+            row.extend([
+                results.get('transcription', ''),
+                results.get('translation', '')
+            ])
+            
+            with open(self.csv_path, 'a', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(row)
+                
+        except Exception as e:
+            logger.error(f"Error writing to CSV: {str(e)}")
+            # Log the problematic results for debugging
+            logger.error(f"Problematic results: {results}")
     
     def _log_results(self, results):
         """Log results to terminal."""
@@ -160,8 +178,12 @@ class VideoProcessor:
         
         if results.get('actions'):
             logger.info("\nTop Actions:")
-            for action, conf in results['actions']:
-                logger.info(f"  {action}: {conf:.1%}")
+            try:
+                for action, conf in results['actions']:
+                    logger.info(f"  Action {action}: {conf:.1%}")
+            except Exception as e:
+                logger.error(f"Error formatting actions for display: {str(e)}")
+                logger.info(f"  Raw actions data: {results['actions']}")
         
         if results.get('objects'):
             logger.info("\nObjects Detected:")
