@@ -1,11 +1,11 @@
 # Cross-Cultural AI
 Funded by InnovateUK, 2024-25
 
-Cross-cultural AI automatically translates & analyses user-generated video to help generate culturally-specific insights. As filmmakers, we increasingly draw on crowdsourcing to generate content, ethnography to relate these hints and glimpses of life to the issues and indexes that matter, and data visualisation to draw it all together -- while keeping people's stories at the centre. 
+This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English. 
 
-AI can recognise objects, people and actions; culturally-specific datasets plus crowdsourcing mean that creative practitioners could work more easily with participants globally. While our work focuses on climate change, the AI-driven platform we're developing could be applied to ranges of content, contexts, projects and products.
+This is a v.1 prototype for proof of concept only. As a next step, participants will be engaged in a conversation with the system to retrain the model, or train a new one from scratch using unsupervised learning. The initial uses the YOLO and model, which was trained on publicly available image and video datasets known to be biased toward Western people using data harvested from the internet with consent or remuneration. Since this project aims to keep ethics at the centre, the first version was developed for proof of concept only. 
 
-Our approach combines quality of insights derived from user-generated content, with quantity coming with scale: Our Nine Earths project (http://nine-earths.net) drew from hundreds of hours of video from 12 countries. AI can now help translate languages, identify relevant content, and recognise patterns to say something meaningful, especially when combined with participants' input and verification -- keeping ethics and sustainability at the centre.
+That said, it is fully functional, and you can download and test it. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
 
 # Video Analysis pipeline
 
@@ -13,7 +13,6 @@ A comprehensive video analysis pipeline that performs:
 - Action recognition using YOLO pose estimation (101 action classes)
 - Object detection using YOLOv8
 - Audio transcription and translation with automatic detection of over 100 languages
-- This work in progress. As a next step, participants re-train the model through feedback.
 
 ## Directory Structure
 ```
