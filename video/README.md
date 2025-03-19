@@ -1,11 +1,13 @@
 # Cross-Cultural AI
 Funded by InnovateUK, 2024-25
 
-This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English. 
+This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English.
+
+## Disclaimers
 
 This is a v.1 prototype for proof of concept only. As a next step, participants will be engaged in a conversation with the system to retrain the model, or train a new one from scratch using unsupervised learning. The initial uses the YOLO and model, which was trained on publicly available image and video datasets known to be biased toward Western people using data harvested from the internet with consent or remuneration. Since this project aims to keep ethics at the centre, the first version was developed for proof of concept only. 
 
-The other disclaimer is around security and potential use by 'bad actors'. As a 'dual-use technology', an AI system that identifies objects, people and actions across cultures might clearly be of interest to governments or organisations seeking to use such technology for political uses or human rights abuses. In this case, our prototype is simple and there are much more sophisticated ones in the public domain.
+The other disclaimer is around security and potential use by 'bad actors'. As a 'dual-use technology', an AI system that identifies objects, people and actions across cultures might clearly be of interest to governments or organisations seeking to use such technology for political uses or human rights abuses. In this case, our prototype is simple and there are much more sophisticated ones in the public domain. More generally, we have been advised that open sourcing such software is a form of risk mitigation in itself.
 
 Disclaimers given, it is fully functional, and you can download and test it. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
 
