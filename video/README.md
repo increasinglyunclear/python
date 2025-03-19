@@ -9,9 +9,9 @@ This is a v.1 prototype for proof of concept only. As a next step, participants 
 
 The other disclaimer is around security and potential use by 'bad actors'. As a 'dual-use technology', an AI system that identifies objects, people and actions across cultures might clearly be of interest to governments or organisations seeking to use such technology for political uses or human rights abuses. In this case, our prototype is simple and there are much more sophisticated ones in the public domain. More generally, we have been advised that open sourcing such software is a form of risk mitigation in itself.
 
-Disclaimers given, it is fully functional, and you can download and test it. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
+# Using this video Analysis pipeline
 
-# Video Analysis pipeline
+Disclaimers given, this software is fully functional, and you can download and test it. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
 
 A comprehensive video analysis pipeline that performs:
 - Action recognition using YOLO pose estimation (101 action classes)
