@@ -1,7 +1,7 @@
 # Cross-Cultural AI
 Funded by InnovateUK, 2024-25
 
-This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English. This emerged from my work on Nine Earths, manually conducting a visual ethnography using hours of video footage from 12 countries. I thought AI could help – it can perform basic pattern recognition, but could it go further to make ethnographic interpretations about specific cultural practices? 
+This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English. This emerged from my work on <a href="https://increasinglyunclear.substack.com/p/ai-for-nine-earths">Nine Earths</a> and <a href="https://ai.postdigitalcultures.org/">Ethnographic AI</a>, manually conducting a visual ethnography using hours of video footage from 12 countries. I thought AI could help – it can perform basic pattern recognition, but could it go further to make ethnographic interpretations about specific cultural practices? 
 
 ## Disclaimers
 
