@@ -1,11 +1,12 @@
-# Scene Description Pipeline v1.0
+# Scene Description Pipeline v1.1
 
-A robust pipeline for scene understanding and classification using deep learning. This pipeline uses a ResNet50 model pre-trained on the Places365 dataset to classify scenes into 365 different categories.
+A robust pipeline for scene understanding and classification using deep learning. This pipeline uses an ensemble of ResNet50 models pre-trained on the Places365 dataset to classify scenes into 365 different categories with improved accuracy.
 
 ## Features
 
+- Ensemble-based scene classification using multiple pre-trained models
 - Scene classification into 365 distinct categories
-- High-accuracy scene recognition
+- High-accuracy scene recognition through model averaging
 - Detailed probability outputs for top predictions
 - Visualization of classification results
 - JSON output for programmatic use
@@ -16,6 +17,7 @@ A robust pipeline for scene understanding and classification using deep learning
 ```
 scene_analysis/
 ├── README.md
+├── requirements.txt
 ├── scene_understanding.py      # Core scene understanding module
 ├── test_scene_understanding.py # Test script for the pipeline
 ├── test_images/               # Directory for test images
@@ -39,7 +41,7 @@ scene_analysis/
 1. Clone the repository
 2. Install dependencies:
 ```bash
-pip install torch torchvision opencv-python numpy matplotlib
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -54,6 +56,17 @@ The script will:
 - Process all images in the test_images directory
 - Generate visualizations in the results directory
 - Save detailed analysis in JSON format
+
+## Model Architecture
+
+The pipeline uses an ensemble of two ResNet50 models:
+1. Places365 model - Trained on the full Places365 dataset
+2. Places365-Standard model - A more comprehensive version with additional training data
+
+The final prediction is obtained by averaging the probabilities from both models, which helps to:
+- Reduce prediction variance
+- Improve accuracy on ambiguous scenes
+- Handle edge cases better
 
 ## Output Format
 
@@ -84,20 +97,11 @@ For each processed image, a visualization is generated showing:
 - Top scene categories with probabilities
 - Bar chart of confidence scores
 
-## Model Details
-
-The pipeline uses a ResNet50 model pre-trained on the Places365 dataset, which includes 365 scene categories covering:
-- Indoor scenes (homes, offices, public spaces)
-- Outdoor scenes (natural landscapes, urban environments)
-- Architectural structures
-- Transportation spaces
-- Recreational areas
-
 ## Performance
 
-- Processing time: ~1-2 seconds per image (CPU)
-- Accuracy: State-of-the-art scene classification
-- Memory usage: ~500MB for model weights
+- Processing time: ~2-3 seconds per image (CPU)
+- Accuracy: Improved through ensemble approach
+- Memory usage: ~1GB for both model weights
 
 ## Future Improvements
 
@@ -106,6 +110,7 @@ The pipeline uses a ResNet50 model pre-trained on the Places365 dataset, which i
 - Add support for video input
 - Include more detailed scene descriptions
 - Add confidence threshold filtering
+- Experiment with different ensemble weighting strategies
 
 ## License
 
@@ -113,6 +118,6 @@ MIT License
 
 ## Acknowledgments
 
-- Places365 dataset and model from MIT CSAIL
+- Places365 dataset and models from MIT CSAIL
 - PyTorch and torchvision teams
 - OpenCV community 

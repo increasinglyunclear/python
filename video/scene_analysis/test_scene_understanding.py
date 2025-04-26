@@ -1,10 +1,12 @@
+import os
+import json
 import cv2
-import numpy as np
-from pathlib import Path
+import logging
+from datetime import datetime
 from scene_understanding import SceneUnderstanding
 import matplotlib.pyplot as plt
-import json
-from datetime import datetime
+from pathlib import Path
+import numpy as np
 
 def save_results(image_name, results, output_file):
     """Save analysis results to a JSON file"""
@@ -51,73 +53,105 @@ def display_results(image, results, image_path):
     plt.savefig(f'results/{Path(image_path).stem}_analysis.png')
     plt.close()
 
-def list_all_categories(analyzer):
-    """List all available scene categories"""
-    categories = analyzer.categories  # Access categories from SceneUnderstanding instance
-    print("\nAvailable Scene Categories:")
-    print("==========================")
-    for idx, category in sorted(categories.items()):
-        print(f"{idx:3d}: {category}")
-    print(f"\nTotal number of categories: {len(categories)}")
-
-def process_single_image(analyzer, image_path, output_file):
-    """Process a single image and save results"""
-    print(f"\nProcessing {image_path.name}...")
-    
-    # Read image
-    image = cv2.imread(str(image_path))
-    if image is None:
-        print(f"Could not read image: {image_path}")
-        return
-    
-    # Analyze scene
-    results = analyzer.analyze_frame(image)
-    
-    # Print results
-    print("\nTop Scene Categories:")
-    for cat in results['classification']['top_categories']:
-        print(f"{cat['category']}: {cat['probability']:.4f}")
-    
-    # Save results
-    save_results(image_path.name, results, output_file)
-    
-    # Generate visualization
-    display_results(image, results, image_path)
+def process_image(image_path, analyzer):
+    """Process a single image and return scene analysis results."""
+    try:
+        # Read and process image
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"Could not read image: {image_path}")
+        
+        # Get scene analysis
+        results = analyzer.analyze_frame(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        
+        # Format results
+        formatted_results = {
+            'image_path': image_path,
+            'primary_scene': results['scene_category'],
+            'confidence': results['confidence'],
+            'alternative_scenes': results['alternative_scenes']
+        }
+        
+        # Print results
+        print("\nTop Scene Categories:")
+        print(f"1. {results['scene_category']} ({results['confidence']:.2f})")
+        for i, alt in enumerate(results['alternative_scenes'], 2):
+            print(f"{i}. {alt['category']} ({alt['confidence']:.2f})")
+        
+        # Create visualization
+        plt.figure(figsize=(12, 6))
+        
+        # Display original image
+        plt.subplot(1, 2, 1)
+        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        plt.title('Input Image')
+        plt.axis('off')
+        
+        # Display classification results
+        plt.subplot(1, 2, 2)
+        categories = [results['scene_category']] + [alt['category'] for alt in results['alternative_scenes']]
+        confidences = [results['confidence']] + [alt['confidence'] for alt in results['alternative_scenes']]
+        y_pos = np.arange(len(categories))
+        
+        plt.barh(y_pos, confidences, align='center')
+        plt.yticks(y_pos, [cat.replace('/', '\n') for cat in categories])
+        plt.xlabel('Confidence')
+        plt.title('Top Scene Categories')
+        
+        # Save visualization
+        plt.tight_layout()
+        vis_path = os.path.join('results', f"{os.path.splitext(os.path.basename(image_path))[0]}_analysis.png")
+        plt.savefig(vis_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        return formatted_results
+        
+    except Exception as e:
+        print(f"\nError processing {os.path.basename(image_path)}: {str(e)}")
+        return None
 
 def main():
-    # Create results directory if it doesn't exist
-    Path('results').mkdir(exist_ok=True)
+    # Set up logging
+    logging.basicConfig(level=logging.INFO)
     
-    # Initialize output file
-    output_file = f'results/analysis_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
-    
-    # Initialize scene understanding module
+    # Initialize scene analyzer
     analyzer = SceneUnderstanding()
     
-    # List all available categories
-    list_all_categories(analyzer)
+    # Print available categories
+    print("\nAvailable Scene Categories:")
+    print("==========================")
+    for idx, category in analyzer.categories.items():
+        print(f"{idx:3d}: {category}")
+    print(f"\nTotal number of categories: {len(analyzer.categories)}\n")
     
-    # Test images
-    test_dir = Path('test_images')
-    image_files = list(test_dir.glob('*.jpg')) + list(test_dir.glob('*.jpeg')) + list(test_dir.glob('*.png'))
+    # Create results directory if it doesn't exist
+    os.makedirs('results', exist_ok=True)
     
-    if not image_files:
-        print("No test images found. Please add some images to the test_images directory.")
-        return
+    # Get list of images to process
+    image_dir = 'test_images'
+    image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     
-    print(f"\nFound {len(image_files)} images to process")
-    print(f"Results will be saved to {output_file}")
+    print(f"Found {len(image_files)} images to process")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    results_file = f'results/analysis_{timestamp}.json'
+    print(f"Results will be saved to {results_file}\n")
     
     # Process each image
+    all_results = []
     for image_file in image_files:
-        try:
-            process_single_image(analyzer, image_file, output_file)
-        except Exception as e:
-            print(f"\nError processing {image_file.name}: {str(e)}")
-            continue
+        image_path = os.path.join(image_dir, image_file)
+        print(f"Processing {image_file}...")
+        
+        results = process_image(image_path, analyzer)
+        if results:
+            all_results.append(results)
+    
+    # Save results
+    with open(results_file, 'w') as f:
+        json.dump(all_results, f, indent=2)
     
     print("\nProcessing complete!")
-    print(f"Results saved to {output_file}")
+    print(f"Results saved to {results_file}")
     print("Visualizations saved in the 'results' directory")
 
 if __name__ == "__main__":
