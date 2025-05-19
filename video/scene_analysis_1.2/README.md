@@ -10,8 +10,11 @@ scene_analysis/
 │   ├── video_analyzer.py      # Main video analysis implementation
 │   ├── scene_understanding.py # Scene analysis module
 │   └── test_analyzer.py       # Test script for video analysis
+├── models/                    # Directory for model files (not included in repo)
 ├── training_data/            # Directory for training data and results
 ├── requirements.txt          # Python dependencies
+├── download_models.py        # Python script to download models
+├── download_models.sh        # Shell script to download models
 └── README.md                # This file
 ```
 
@@ -51,9 +54,15 @@ pip install -r requirements.txt
 
 4. Download required models:
 ```bash
-# YOLO models will be downloaded automatically on first run
-# Additional models may need to be downloaded based on your needs
+# Using Python script (recommended)
+python download_models.py
+
+# Or using shell script
+chmod +x download_models.sh
+./download_models.sh
 ```
+
+The models will be downloaded to the `models` directory. This step is required before running the video analysis.
 
 ## Usage
 
