@@ -1,6 +1,6 @@
 # LLM Fine-tuning
 
-This project fine-tunes Llama 2 for text analysis using domain-specific training data.
+This project fine-tunes GPT-2 for text analysis using domain-specific training data.
 
 ## Project Structure
 
