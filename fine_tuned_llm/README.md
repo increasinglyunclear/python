@@ -1,6 +1,6 @@
-# Philosophical LLM Fine-tuning Project
+# LLM Fine-tuning
 
-This project fine-tunes Llama 2 for philosophical and architectural text analysis using domain-specific training data.
+This project fine-tunes Llama 2 for text analysis using domain-specific training data.
 
 ## Project Structure
 
@@ -39,7 +39,7 @@ We use a domain-specific fine-tuning approach with the following key features:
 
 1. **Base Model**: Llama 2 7B (optimized for M4 MacBook)
 2. **Fine-tuning Method**: LoRA (Low-Rank Adaptation)
-3. **Training Data**: Processed philosophical and architectural texts
+3. **Training Data**: Processed texts
 4. **Optimization**: Gradient accumulation and mixed precision training
 
 ## Configuration
@@ -71,6 +71,6 @@ python scripts/train.py
 
 ## Notes
 
-- The model is optimized for philosophical and architectural text analysis
+- The model is optimized for text analysis
 - Uses LoRA for efficient fine-tuning
 - Supports long-form text generation and analysis 
