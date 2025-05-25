@@ -1,6 +1,6 @@
 # Video Analysis with Kimi-VL-A3B-Thinking
 
-This project demonstrates how to perform frame-level video analysis using the [Kimi-VL-A3B-Thinking](https://huggingface.co/moonshotai/Kimi-VL-A3B-Thinking) vision-language model. The script extracts the first frame from a video, generates a detailed, philosophically reflective description, and saves the result to a text file.
+This project demonstrates how to perform frame-level video analysis using the [Kimi-VL-A3B-Thinking](https://huggingface.co/moonshotai/Kimi-VL-A3B-Thinking) vision-language model. The script extracts the first frame from a video, generates a detailed, philosophically reflective description, and saves the result to a text file. I am only analyzing the first frame for now because this model pushes my Macbook M4 to the limit!
 
 ## Features
 - Uses a state-of-the-art open-source vision-language model (Kimi-VL-A3B-Thinking)
