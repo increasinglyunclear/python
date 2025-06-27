@@ -1,0 +1,20 @@
+# Core dependencies for video processing and AI models
+torch>=2.0.0
+transformers>=4.30.0
+peft>=0.4.0
+opencv-python>=4.8.0
+Pillow>=9.0.0
+numpy>=1.24.0
+
+# Additional dependencies for model processing
+accelerate>=0.20.0
+safetensors>=0.3.0
+tokenizers>=0.13.0
+
+# Utilities
+tqdm>=4.65.0
+pathlib2>=2.3.0
+
+# Optional: for better performance (if available)
+# torchvision>=0.15.0
+# torchaudio>=2.0.0 
