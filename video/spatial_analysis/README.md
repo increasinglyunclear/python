@@ -1,6 +1,6 @@
 # Video to Philosophy Pipeline
 
-A streamlined AI-powered pipeline that analyzes videos and generates spatial-philosophical interpretations using a vision-language model and fine-tuned language model. You will need to fine-tune your own LLM - I used Phi because it is small, using LoRA adapters for fine-tuning. 
+A streamlined AI-powered pipeline that analyzes videos and generates spatial-philosophical interpretations using a vision-language model and fine-tuned language model. You will need to fine-tune your own LLM - I used Phi because it is small, using LoRA adapters for fine-tuning, so I could accomplish this locally on a laptop. 
 
 ## Overview
 
