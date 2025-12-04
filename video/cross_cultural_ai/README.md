@@ -1,19 +1,17 @@
 # Cross-Cultural AI
 Funded by InnovateUK, 2024-25
 
-This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages to English. This emerged from my work on <a href="https://increasinglyunclear.substack.com/p/ai-for-nine-earths">Nine Earths</a> and <a href="https://ai.postdigitalcultures.org/">Ethnographic AI</a>. I completed a visual ethnography using hours of video footage from 12 countries to create films like <a href="https://www.youtube.com/watch?v=WFMKrOkJ7fA">this one</a>, and I thought AI could help – it can perform basic pattern recognition, but could it go further to make ethnographic interpretations about specific cultural practices? 
+This is a machine learning model for video analysis developed by me a part of the Cross-Cultural AI project. It automatically translates & analyses user-generated video to help generate culturally-specific insights and facilitate cross-cultural communication. It can recognise objects, people and actions, transcribe and translate more than 100 spoken languages into English. This emerged from my work on <a href="https://increasinglyunclear.substack.com/p/ai-for-nine-earths">Nine Earths</a> and <a href="https://ai.postdigitalcultures.org/">Ethnographic AI</a>. I completed a visual ethnography using hours of video footage from 12 countries to create films like <a href="https://www.youtube.com/watch?v=WFMKrOkJ7fA">this one</a>, then I built this model to help – it can perform basic pattern recognition, but could be extended to make ethnographic interpretations about specific cultural practices. We used crowdsourced data from participants, testers and experts to inform the model development.
 
-## Disclaimers
+## Disclaimer
 
-This is a v.1 prototype for proof of concept only. As a next step, participants will be engaged in a conversation with the system to retrain the model, or train a new one from scratch using unsupervised learning. The initial uses the YOLO and model, which was trained on publicly available image and video datasets known to be biased toward Western people using data harvested from the internet with consent or remuneration. Since this project aims to keep ethics at the centre, the first version was developed for proof of concept only. 
-
-The other disclaimer is around security and potential use by 'bad actors'. As a 'dual-use technology', an AI system that identifies objects, people and actions across cultures might clearly be of interest to governments or organisations seeking to use such technology for political uses or human rights abuses. In this case, our prototype is simple and there are much more sophisticated ones in the public domain. More generally, we have been advised that open sourcing such software is a form of risk mitigation in itself.
+This is a v.1 prototype for proof of concept only. The initial version uses the YOLO model, which was trained on publicly available image and video datasets known to be biased toward Western people, using data harvested from the internet without consent or remuneration. 
 
 # Using this video Analysis pipeline
 
-Disclaimers given, this software is fully functional, and you can download and test it. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
+This software is fully functional. When video files are placed into the 'input' folder, they are automatically analysed, and a CSV file is output containing the objects, people and actions recognised, as well as a transcript and translation of any spoken language.
 
-A comprehensive video analysis pipeline that performs:
+This video analysis pipeline performs:
 - Action recognition using YOLO pose estimation (101 action classes)
 - Object detection using YOLOv8
 - Audio transcription and translation with automatic detection of over 100 languages
