@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Material Encounters — Presentation</title>
+    <link rel="stylesheet" href="presentation.css" />
+    <script>
+      // Where to read/save the notes. Empty = same origin (when this page is
+      // served by the app, locally or via the tunnel). On the static website,
+      // set this to the tunnel base, e.g. "https://your-tunnel.trycloudflare.com",
+      // or drop an api.txt next to this file with that one line. ?api= overrides.
+      window.PRESENTATION_API = "";
+    </script>
+  </head>
+  <body>
+    <canvas id="map"></canvas>
+
+    <header id="masthead">
+      <h1>Material <em>Encounters</em></h1>
+      <p class="tagline">Creativity in the <em>Times of AI</em></p>
+    </header>
+
+    <aside id="panel" aria-hidden="true">
+      <div class="panel-head">
+        <h2 id="panel-title"></h2>
+        <div class="panel-tools">
+          <button id="edit-btn" type="button">Edit</button>
+          <button id="cancel-btn" type="button" hidden>Cancel</button>
+          <button id="save-btn" type="button" hidden>Save</button>
+        </div>
+      </div>
+      <div id="panel-body"></div>
+      <textarea id="panel-edit" spellcheck="false" hidden></textarea>
+      <span id="panel-status"></span>
+    </aside>
+
+    <button id="add-node-btn" type="button">+ Node</button>
+    <button id="refs-toggle" type="button">References</button>
+
+    <input id="node-label-input" type="text" autocomplete="off" spellcheck="false" hidden />
+
+    <aside id="refs" aria-hidden="true">
+      <div class="panel-head">
+        <h2 id="refs-title">References</h2>
+        <div class="panel-tools">
+          <button id="refs-edit-btn" type="button">Edit</button>
+          <button id="refs-cancel-btn" type="button" hidden>Cancel</button>
+          <button id="refs-save-btn" type="button" hidden>Save</button>
+        </div>
+      </div>
+      <div id="refs-body"></div>
+      <textarea id="refs-edit" spellcheck="false" hidden></textarea>
+      <span id="refs-status"></span>
+    </aside>
+
+    <p id="hint">click a theme to read · drag a node's ⊕ to connect</p>
+
+    <script src="presentation.js"></script>
+  </body>
+</html>

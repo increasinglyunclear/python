@@ -1,0 +1,342 @@
+/* Presentation — black-on-white interactive diagram.
+   Starts as a network of the themes around 'creativity'; click a theme to zoom
+   in and read its prepared notes (content/*.md), which are editable and saved
+   back to the server. Mirrors the local presentation mode, inverted to paper. */
+
+:root {
+  --paper: #ffffff;
+  --ink: #0a0a0a;
+  --muted: #6f6f6f;
+  --rule: rgba(0, 0, 0, 0.14);
+  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#map {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* ---- Masthead -------------------------------------------------------- */
+#masthead {
+  position: fixed;
+  top: 26px;
+  left: 34px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#masthead h1 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.1;
+}
+
+#masthead h1 em {
+  font-style: italic;
+}
+
+.tagline {
+  margin: 3px 0 0;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- Notes panel ----------------------------------------------------- */
+#panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(600px, 54vw);
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 36px 40px;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  box-shadow: -24px 0 48px rgba(0, 0, 0, 0.04);
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#panel.visible {
+  transform: translateX(0);
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+#panel-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.panel-tools {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.panel-tools button {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.panel-tools button:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#save-btn {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#panel-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#panel-body p {
+  margin: 0 0 14px;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+#panel-body .empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+#panel-edit {
+  flex: 1;
+  resize: none;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: #fcfcfa;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 14px 16px;
+}
+
+#panel-edit:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+#panel-status {
+  margin-top: 10px;
+  min-height: 14px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* ---- References (left side) ------------------------------------------ */
+#refs-toggle {
+  position: fixed;
+  left: 34px;
+  bottom: 18px;
+  z-index: 4;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#refs-toggle:hover,
+#refs-toggle.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#add-node-btn {
+  position: fixed;
+  left: 162px;
+  bottom: 18px;
+  z-index: 4;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#add-node-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Inline label editor for a freshly placed / renamed node. */
+#node-label-input {
+  position: fixed;
+  z-index: 5;
+  transform: translate(-50%, 14px);
+  width: 160px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+}
+
+#refs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(420px, 42vw);
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 36px 64px;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
+  box-shadow: 24px 0 48px rgba(0, 0, 0, 0.04);
+  transform: translateX(-100%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#refs.visible {
+  transform: translateX(0);
+}
+
+#refs-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+#refs-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#refs-body p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#refs-body .empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+#refs-edit {
+  flex: 1;
+  resize: none;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: #fcfcfa;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 14px 16px;
+}
+
+#refs-edit:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+#refs-status {
+  margin-top: 10px;
+  min-height: 14px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* ---- Hint ------------------------------------------------------------ */
+#hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

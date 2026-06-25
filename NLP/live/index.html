@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material Encounters</title>
+    <link rel="stylesheet" href="view.css" />
+    <script>
+      // Where the viewer reads live data from.
+      //  - Leave "" when the page is served by the Python app (same origin /ws).
+      //  - When hosting this page statically (e.g. the workshop site /live/),
+      //    set it to the running server's websocket, e.g.
+      //    "wss://your-server.example/ws" or a tunnel URL, or drop a ws.txt
+      //    file next to this page with that one line. ?ws= overrides.
+      window.LIVE_WS_URL = "";
+    </script>
+  </head>
+  <body>
+    <canvas id="map"></canvas>
+
+    <header id="masthead">
+      <h1>Material <em>Encounters</em></h1>
+      <p class="tagline">Creativity in the <em>Times of AI</em></p>
+      <p class="blurb">
+        We are using machine learning to link concepts from a live transcript of
+        our conversation. Full workshop information at
+        <a href="https://the-making-of-creativity.com/" target="_blank" rel="noopener">https://the-making-of-creativity.com/</a>
+      </p>
+    </header>
+
+    <aside id="panel" aria-hidden="true">
+      <div class="panel-head">
+        <h2 id="panel-title"></h2>
+        <span id="panel-count"></span>
+      </div>
+      <ul id="panel-list"></ul>
+      <p id="panel-empty" class="empty" hidden>Nothing captured here yet.</p>
+      <p class="panel-foot">click a phrase to find it in the transcript</p>
+    </aside>
+
+    <p id="hint">click a theme to explore</p>
+    <div id="status" class="disconnected">connecting…</div>
+
+    <section id="transcript" aria-label="transcript">
+      <div class="transcript-label">Transcript</div>
+      <ol id="transcript-scroll"></ol>
+    </section>
+
+    <script src="view.js"></script>
+  </body>
+</html>
