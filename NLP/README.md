@@ -1,6 +1,6 @@
 # Weaving Live Semantic Vector Map
-Kevin Walker June 2026,
-Developed for https://the-making-of-creativity.com/
+Kevin Walker, June 2026,
+developed for https://the-making-of-creativity.com/
 
 A shared web app for live events: participants' browsers transcribe their speech
 locally and stream the text to a small server, which surfaces key concepts with
