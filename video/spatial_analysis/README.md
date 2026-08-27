@@ -1,4 +1,4 @@
-# Video to Philosophy Pipeline
+# Poirot: a social-spatial AI model.
 
 A streamlined AI-powered pipeline that analyzes videos and generates spatial-philosophical interpretations using a vision-language model and fine-tuned language model, created as part of [philosophymachines.com](http://philosophymachines.com/). You will need to fine-tune your own LLM - We used Phi because it is small, using LoRA adapters for fine-tuning, so we could accomplish this locally on a laptop. 
 
